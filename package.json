@@ -16,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/belbanas/norbit-mock/issues"
   },
-  "homepage": "https://github.com/belbanas/norbit-mock#readme"
+  "homepage": "https://github.com/belbanas/norbit-mock#readme",
+  "dependencies": {
+    "csvtojson": "^2.0.10",
+    "express": "^4.17.1",
+    "ws": "^7.4.3"
+  }
 }
