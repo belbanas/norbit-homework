@@ -12,17 +12,19 @@ wss.on("connection", (ws) => {
     console.log("A new client connected.");
     ws.send("Welcome new client!");
 
-    CSVToJson().fromFile(filename).then((coords) => {
-        let i = 0;
-        const interval = setInterval(() => {
-            ws.send(JSON.stringify(coords[i]));
-            i++;
-            if (i >= coords.length) {
-                clearInterval(interval);
-                ws.send("End of coordinates");
-            }
-        }, 1000);
-    });
+    CSVToJson()
+        .fromFile(filename)
+        .then((coords) => {
+            let i = 0;
+            const interval = setInterval(() => {
+                ws.send(JSON.stringify(coords[i]));
+                i++;
+                if (i >= coords.length) {
+                    clearInterval(interval);
+                    ws.send("End of coordinates");
+                }
+            }, 1000);
+        });
 });
 
 app.get("/", (req, res) => {
