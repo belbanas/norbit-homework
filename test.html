@@ -12,6 +12,11 @@
 
         socket.addEventListener("open", (event) => {
             console.log("Connected to WS server");
+
         });
+
+        socket.addEventListener("message", (event) => {
+            console.log(event.data);
+        })
     </script>
 </html>
