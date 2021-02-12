@@ -7,12 +7,11 @@ const wss = new WebSocket.Server({ server: server });
 
 wss.on("connection", (ws) => {
     console.log("A new client connected.");
-    ws.send("Welcome new client!");
+    ws.send("SERVER: Welcome new client!");
 
     ws.on("message", (data) => {
-        console.log(data);
         wss.clients.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN) {
+            if (client !== ws && client.readyState === WebSocket.OPEN) {
                 client.send(data);
             }
         });

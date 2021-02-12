@@ -6,7 +6,7 @@ const filename = "line1.csv";
 
 socket.addEventListener("open", (event) => {
     console.log("Connected to WS server");
-
+    socket.send("Mock application connected, starting broadcast...");
     CSVToJson()
         .fromFile(filename)
         .then((coords) => {
