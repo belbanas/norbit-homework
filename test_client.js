@@ -1,20 +1,11 @@
-// const WebSocket = require("ws");
-// const socket = new WebSocket("ws://localhost:3000");
-
-// socket.addEventListener("open", () => {
-//     socket.send("Test client connected");
-// })
-
-// socket.addEventListener("message", (event) => {
-//     console.log(event.data);
-// })
-
 const io = require("socket.io-client");
-
 const socket = io("ws://localhost:3000");
 
-socket.emit("message", "Hello");
+socket.on("connect", () => {
+    console.log("Connected to the server");
+    socket.emit("message", "Test Client Connected");
+});
 
-socket.on("message2", (msg) => {
+socket.on("broadcast", (msg) => {
     console.log(msg);
 });
