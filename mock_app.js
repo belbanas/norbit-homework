@@ -11,7 +11,7 @@ socket.on("connect", () => {
         .then((coords) => {
             let i = 0;
             const interval = setInterval(() => {
-                socket.emit("coordinates", JSON.stringify(coords[i]));
+                socket.emit("coordinates", coords[i]);
                 i++;
                 if (i >= coords.length) {
                     clearInterval(interval);

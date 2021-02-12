@@ -14,7 +14,7 @@ function App() {
     }, []);
 
     return <div className="App">
-        Current coordinates: <p>{response}</p>
+        Current coordinates: Latitude: {response.lat}, Longitude: {response.lon}, Heading: {response.heading}
         </div>;
 }
 
