@@ -43,7 +43,7 @@ function MapComponent(props) {
                     features: props.features,
                 })
             );
-            map.getView().fit(featuresLayer.getSource().getFeatures()[0].getGeometry(), {padding: [100, 100, 100, 100], minResolution: 0.5});
+            map.getView().fit(featuresLayer.getSource().getFeatures()[0].getGeometry(), {padding: [100, 100, 100, 100], minResolution: 0.2});
         }
     }, [props.features, featuresLayer, map]);
 
