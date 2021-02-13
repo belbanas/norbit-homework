@@ -27,7 +27,7 @@ function MapComponent(props) {
             view: new View({
                 projection: "EPSG:3857",
                 center: [0, 0],
-                zoom: 0,
+                zoom: 2,
             }),
             controls: [],
         });
@@ -43,8 +43,9 @@ function MapComponent(props) {
                     features: props.features,
                 })
             );
+            map.getView().fit(featuresLayer.getSource().getFeatures()[0].getGeometry(), {padding: [100, 100, 100, 100], minResolution: 0.5});
         }
-    }, [props.features, featuresLayer]);
+    }, [props.features, featuresLayer, map]);
 
     return (
         <React.Fragment>
