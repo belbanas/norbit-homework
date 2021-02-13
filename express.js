@@ -6,7 +6,7 @@ const io = require("socket.io")(server, {
 });
 
 io.on("connection", (socket) => {
-    console.log("A new client connected.");
+    console.log("A new client connected with id: " + socket.id);
 
     socket.on("message", (message) => {
         io.sockets.emit("broadcast", message);
