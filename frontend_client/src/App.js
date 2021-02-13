@@ -1,3 +1,4 @@
+import './App.css';
 import React, { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import GeoJSON from "ol/format/GeoJSON";
@@ -34,7 +35,6 @@ function App() {
                 featureProjection: 'EPSG:3857'
             };
             const parsedFeatures = new GeoJSON().readFeatures(GEOjson, wktOptions)
-            console.log(parsedFeatures);
             setResponse(data);
             setFeatures(parsedFeatures);
         });
@@ -42,11 +42,11 @@ function App() {
 
     return (
         <div className="App">
-            {JSON.stringify(features)}
-            Current coordinates: Latitude: {response.lat}, Longitude:{" "}
-            {response.lon}, Heading: {response.heading}
+            <div className="coordinates-label">
+                Current coordinates: Latitude: {response.lat}, Longitude:{" "}
+                {response.lon}, Heading: {response.heading}
+            </div>
             <MapComponent features={features}/>
-            <div id="map"></div>
         </div>
     );
 }
