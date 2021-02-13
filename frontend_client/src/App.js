@@ -1,4 +1,4 @@
-import './App.css';
+import "./App.css";
 import React, { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import GeoJSON from "ol/format/GeoJSON";
@@ -31,14 +31,25 @@ function App() {
                 ],
             };
             const wktOptions = {
-                dataProjection: 'EPSG:4326',
-                featureProjection: 'EPSG:3857'
+                dataProjection: "EPSG:4326",
+                featureProjection: "EPSG:3857",
             };
-            const parsedFeatures = new GeoJSON().readFeatures(GEOjson, wktOptions)
+            const parsedFeatures = new GeoJSON().readFeatures(
+                GEOjson,
+                wktOptions
+            );
             setResponse(data);
             setFeatures(parsedFeatures);
         });
     }, []);
+
+    const startBtnHandler = () => {
+        console.log("START RECORDING");
+    };
+
+    const stopBtnHandler = () => {
+        console.log("STOP RECORDING");
+    };
 
     return (
         <div className="App">
@@ -46,10 +57,10 @@ function App() {
                 Current coordinates: Latitude: {response.lat}, Longitude:{" "}
                 {response.lon}, Heading: {response.heading}
             </div>
-            <MapComponent features={features}/>
+            <MapComponent features={features} />
             <div className="record-coord-label">
-                <button>Start recording</button>
-                <button>Stop recording</button>
+                <button onClick={startBtnHandler}>Start recording</button>
+                <button onClick={stopBtnHandler}>Stop recording</button>
             </div>
         </div>
     );
