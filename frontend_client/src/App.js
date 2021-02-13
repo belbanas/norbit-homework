@@ -5,6 +5,7 @@ import GeoJSON from "ol/format/GeoJSON";
 import MapComponent from "./components/MapComponent";
 
 const ENDPOINT = "ws://localhost:3000";
+let saving = false;
 
 function App() {
     const [response, setResponse] = useState({});
@@ -40,15 +41,21 @@ function App() {
             );
             setResponse(data);
             setFeatures(parsedFeatures);
+            console.log(saving);
+            if (saving) {
+                socket.emit("save", data);
+            }
         });
     }, []);
 
     const startBtnHandler = () => {
         console.log("START RECORDING");
+        saving = true;
     };
 
     const stopBtnHandler = () => {
         console.log("STOP RECORDING");
+        saving = false;
     };
 
     return (
