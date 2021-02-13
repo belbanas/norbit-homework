@@ -5,7 +5,6 @@ import GeoJSON from "ol/format/GeoJSON";
 import MapComponent from "./components/MapComponent";
 
 const ENDPOINT = "ws://localhost:3000";
-let saving = false;
 
 function App() {
     const [response, setResponse] = useState({});
@@ -14,48 +13,29 @@ function App() {
     useEffect(() => {
         const socket = socketIOClient(ENDPOINT);
         socket.on("broadcast", (data) => {
-            let GEOjson = {
-                type: "FeatureCollection",
-                features: [
-                    {
-                        type: "Feature",
-                        properties: {
-                            shape: "Marker",
-                            name: "Unnamed Layer",
-                            category: "default",
-                        },
-                        geometry: {
-                            type: "Point",
-                            coordinates: [data.lon, data.lat, data.heading],
-                        },
-                    },
-                ],
-            };
             const wktOptions = {
                 dataProjection: "EPSG:4326",
                 featureProjection: "EPSG:3857",
             };
             const parsedFeatures = new GeoJSON().readFeatures(
-                GEOjson,
+                data,
                 wktOptions
             );
             setResponse(data);
             setFeatures(parsedFeatures);
-            console.log(saving);
-            if (saving) {
-                socket.emit("save", data);
-            }
         });
     }, []);
 
     const startBtnHandler = () => {
+        const socket = socketIOClient(ENDPOINT);
+        socket.emit("save", true);
         console.log("START RECORDING");
-        saving = true;
     };
 
     const stopBtnHandler = () => {
+        const socket = socketIOClient(ENDPOINT);
+        socket.emit("save", false);
         console.log("STOP RECORDING");
-        saving = false;
     };
 
     return (
