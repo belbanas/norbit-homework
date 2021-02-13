@@ -47,6 +47,10 @@ function App() {
                 {response.lon}, Heading: {response.heading}
             </div>
             <MapComponent features={features}/>
+            <div className="record-coord-label">
+                <button>Start recording</button>
+                <button>Stop recording</button>
+            </div>
         </div>
     );
 }
