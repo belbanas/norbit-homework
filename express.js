@@ -51,11 +51,31 @@ io.on("connection", (socket) => {
         console.log("Client disconnected");
     });
 
+    let lastId;
+
     socket.on("save", (bool) => {
         saving = bool;
         if (saving) {
             console.log("START SAVING COORDINATES");
             geoJSONtemplate.features[0].geometry.coordinates = [];
+            db.query("INSERT INTO tracks(client_id) VALUES($1) RETURNING id", [socket.id], (err, res) => {
+                if (err) {
+                    console.log("ERROR: " + err);
+                } else {
+                    console.log("START OK");
+                    lastId = res.rows[0].id;
+                    console.log(lastId);
+                }
+            })
+        } else {
+            console.log(lastId);
+            db.query("UPDATE tracks SET stop_record = CURRENT_TIMESTAMP WHERE id = $1", [lastId], (err, res) => {
+                if (err) {
+                    console.log("ERROR: " + err);
+                } else {
+                    console.log("STOP OK");
+                }
+            })
         }
     });
 });
