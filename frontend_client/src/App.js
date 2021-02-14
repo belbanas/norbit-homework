@@ -5,35 +5,32 @@ import GeoJSON from "ol/format/GeoJSON";
 import MapComponent from "./components/MapComponent";
 
 const ENDPOINT = "ws://localhost:3000";
+let socket;
 
 function App() {
     const [response, setResponse] = useState({});
     const [features, setFeatures] = useState({});
 
     useEffect(() => {
-        const socket = socketIOClient(ENDPOINT);
+        socket = socketIOClient(ENDPOINT);
         socket.on("broadcast", (data) => {
             const wktOptions = {
                 dataProjection: "EPSG:4326",
                 featureProjection: "EPSG:3857",
             };
-            const parsedFeatures = new GeoJSON().readFeatures(
-                data,
-                wktOptions
-            );
+            const parsedFeatures = new GeoJSON().readFeatures(data, wktOptions);
             setResponse(data);
             setFeatures(parsedFeatures);
         });
+        return () => socket.disconnect();
     }, []);
 
     const startBtnHandler = () => {
-        const socket = socketIOClient(ENDPOINT);
         socket.emit("save", true);
         console.log("START RECORDING");
     };
 
     const stopBtnHandler = () => {
-        const socket = socketIOClient(ENDPOINT);
         socket.emit("save", false);
         console.log("STOP RECORDING");
     };
