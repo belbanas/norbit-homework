@@ -26,7 +26,21 @@ let geoJSONtemplate = {
     ],
 };
 
-let lastId;
+let lastTrackId;
+
+const saveCoordinate = (lat, lon, head) => {
+    db.query(
+        "INSERT INTO coordinates(track_id, latitude, longitude, heading) VALUES($1, $2, $3, $4)",
+        [lastTrackId, lat, lon, head],
+        (err, res) => {
+            if (err) {
+                console.log("ERROR: " + err);
+            } else {
+                console.log("SAVED COORDINATE!");
+            }
+        }
+    );
+};
 
 io.on("connection", (socket) => {
     console.log("A new client connected with id: " + socket.id);
@@ -45,17 +59,7 @@ io.on("connection", (socket) => {
                 data.lat,
                 data.heading,
             ]);
-            db.query(
-                "INSERT INTO coordinates(track_id, latitude, longitude, heading) VALUES($1, $2, $3, $4)",
-                [lastId, data.lat, data.lon, data.heading],
-                (err, res) => {
-                    if (err) {
-                        console.log("ERROR: " + err);
-                    } else {
-                        console.log("SAVED!");
-                    }
-                }
-            );
+            saveCoordinate(data.lat, data.lon, data.heading);
         } else {
             geoJSONtemplate.features[0].properties.shape = "Marker";
             geoJSONtemplate.features[0].geometry.type = "Point";
@@ -72,7 +76,6 @@ io.on("connection", (socket) => {
         console.log("Client disconnected");
     });
 
-
     socket.on("save", (bool) => {
         saving = bool;
         if (saving) {
@@ -86,16 +89,16 @@ io.on("connection", (socket) => {
                         console.log("ERROR: " + err);
                     } else {
                         console.log("START OK");
-                        lastId = res.rows[0].id;
-                        console.log(lastId);
+                        lastTrackId = res.rows[0].id;
+                        console.log(lastTrackId);
                     }
                 }
             );
         } else {
-            console.log(lastId);
+            console.log(lastTrackId);
             db.query(
                 "UPDATE tracks SET stop_record = CURRENT_TIMESTAMP WHERE id = $1",
-                [lastId],
+                [lastTrackId],
                 (err, res) => {
                     if (err) {
                         console.log("ERROR: " + err);
