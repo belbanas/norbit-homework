@@ -8,7 +8,7 @@ const ENDPOINT = "ws://localhost:3000";
 let socket;
 
 function App() {
-    const [response, setResponse] = useState({});
+    const [response, setResponse] = useState([]);
     const [features, setFeatures] = useState({});
 
     useEffect(() => {
@@ -19,7 +19,7 @@ function App() {
                 featureProjection: "EPSG:3857",
             };
             const parsedFeatures = new GeoJSON().readFeatures(data, wktOptions);
-            setResponse(data);
+            setResponse(data.features[0].geometry.coordinates);
             setFeatures(parsedFeatures);
         });
         return () => socket.disconnect();
@@ -38,8 +38,8 @@ function App() {
     return (
         <div className="App">
             <div className="coordinates-label">
-                Current coordinates: Latitude: {response.lat}, Longitude:{" "}
-                {response.lon}, Heading: {response.heading}
+                Current coordinates: Latitude: {response[0]}, Longitude:{" "}
+                {response[1]}, Heading: {response[2]}
             </div>
             <MapComponent features={features} />
             <div className="record-coord-label">
