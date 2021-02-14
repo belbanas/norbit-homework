@@ -19,7 +19,15 @@ function App() {
                 featureProjection: "EPSG:3857",
             };
             const parsedFeatures = new GeoJSON().readFeatures(data, wktOptions);
-            setResponse(data.features[0].geometry.coordinates);
+            if (data.features[0].geometry.type === "LineString") {
+                setResponse(
+                    data.features[0].geometry.coordinates[
+                        data.features[0].geometry.coordinates.length - 1
+                    ]
+                );
+            } else {
+                setResponse(data.features[0].geometry.coordinates);
+            }
             setFeatures(parsedFeatures);
         });
         return () => socket.disconnect();
