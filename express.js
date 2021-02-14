@@ -26,6 +26,8 @@ let geoJSONtemplate = {
     ],
 };
 
+let lastId;
+
 io.on("connection", (socket) => {
     console.log("A new client connected with id: " + socket.id);
 
@@ -38,11 +40,30 @@ io.on("connection", (socket) => {
         if (saving) {
             geoJSONtemplate.features[0].properties.shape = "Line";
             geoJSONtemplate.features[0].geometry.type = "LineString";
-            geoJSONtemplate.features[0].geometry.coordinates.push([data.lon, data.lat, data.heading]);
+            geoJSONtemplate.features[0].geometry.coordinates.push([
+                data.lon,
+                data.lat,
+                data.heading,
+            ]);
+            db.query(
+                "INSERT INTO coordinates(track_id, latitude, longitude, heading) VALUES($1, $2, $3, $4)",
+                [lastId, data.lat, data.lon, data.heading],
+                (err, res) => {
+                    if (err) {
+                        console.log("ERROR: " + err);
+                    } else {
+                        console.log("SAVED!");
+                    }
+                }
+            );
         } else {
             geoJSONtemplate.features[0].properties.shape = "Marker";
             geoJSONtemplate.features[0].geometry.type = "Point";
-            geoJSONtemplate.features[0].geometry.coordinates = [data.lon, data.lat, data.heading];
+            geoJSONtemplate.features[0].geometry.coordinates = [
+                data.lon,
+                data.lat,
+                data.heading,
+            ];
         }
         socket.broadcast.emit("broadcast", geoJSONtemplate);
     });
@@ -51,31 +72,38 @@ io.on("connection", (socket) => {
         console.log("Client disconnected");
     });
 
-    let lastId;
 
     socket.on("save", (bool) => {
         saving = bool;
         if (saving) {
             console.log("START SAVING COORDINATES");
             geoJSONtemplate.features[0].geometry.coordinates = [];
-            db.query("INSERT INTO tracks(client_id) VALUES($1) RETURNING id", [socket.id], (err, res) => {
-                if (err) {
-                    console.log("ERROR: " + err);
-                } else {
-                    console.log("START OK");
-                    lastId = res.rows[0].id;
-                    console.log(lastId);
+            db.query(
+                "INSERT INTO tracks(client_id) VALUES($1) RETURNING id",
+                [socket.id],
+                (err, res) => {
+                    if (err) {
+                        console.log("ERROR: " + err);
+                    } else {
+                        console.log("START OK");
+                        lastId = res.rows[0].id;
+                        console.log(lastId);
+                    }
                 }
-            })
+            );
         } else {
             console.log(lastId);
-            db.query("UPDATE tracks SET stop_record = CURRENT_TIMESTAMP WHERE id = $1", [lastId], (err, res) => {
-                if (err) {
-                    console.log("ERROR: " + err);
-                } else {
-                    console.log("STOP OK");
+            db.query(
+                "UPDATE tracks SET stop_record = CURRENT_TIMESTAMP WHERE id = $1",
+                [lastId],
+                (err, res) => {
+                    if (err) {
+                        console.log("ERROR: " + err);
+                    } else {
+                        console.log("STOP OK");
+                    }
                 }
-            })
+            );
         }
     });
 });
