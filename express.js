@@ -8,18 +8,18 @@ const db = require("./db.js");
 
 let saving = false;
 
-let lineGeoJSON = {
+let geoJSONtemplate = {
     type: "FeatureCollection",
     features: [
         {
             type: "Feature",
             properties: {
-                shape: "Line",
+                shape: "",
                 name: "Unnamed Layer",
                 category: "default",
             },
             geometry: {
-                type: "LineString",
+                type: "",
                 coordinates: [],
             },
         },
@@ -36,39 +36,26 @@ io.on("connection", (socket) => {
 
     socket.on("coordinates", (data) => {
         if (saving) {
-            lineGeoJSON.features[0].geometry.coordinates.push([data.lon, data.lat, data.heading]);
-            socket.broadcast.emit("broadcast", lineGeoJSON);
+            geoJSONtemplate.features[0].properties.shape = "Line";
+            geoJSONtemplate.features[0].geometry.type = "LineString";
+            geoJSONtemplate.features[0].geometry.coordinates.push([data.lon, data.lat, data.heading]);
         } else {
-            lineGeoJSON.features[0].geometry.coordinates = [];
-            let geoJSON = {
-                type: "FeatureCollection",
-                features: [
-                    {
-                        type: "Feature",
-                        properties: {
-                            shape: "Marker",
-                            name: "Unnamed Layer",
-                            category: "default",
-                        },
-                        geometry: {
-                            type: "Point",
-                            coordinates: [data.lon, data.lat, data.heading],
-                        },
-                    },
-                ],
-            };
-            socket.broadcast.emit("broadcast", geoJSON);
+            geoJSONtemplate.features[0].properties.shape = "Marker";
+            geoJSONtemplate.features[0].geometry.type = "Point";
+            geoJSONtemplate.features[0].geometry.coordinates = [data.lon, data.lat, data.heading];
         }
+        socket.broadcast.emit("broadcast", geoJSONtemplate);
     });
 
     socket.on("disconnect", () => {
         console.log("Client disconnected");
     });
 
-    socket.on("save", (data) => {
-        saving = data;
+    socket.on("save", (bool) => {
+        saving = bool;
         if (saving) {
-            console.log("SAVING COORDINATES");
+            console.log("START SAVING COORDINATES");
+            geoJSONtemplate.features[0].geometry.coordinates = [];
         }
     });
 });
