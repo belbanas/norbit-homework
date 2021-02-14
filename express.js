@@ -42,6 +42,36 @@ const saveCoordinate = (lat, lon, head) => {
     );
 };
 
+const saveTrack = (clientId) => {
+    db.query(
+        "INSERT INTO tracks(client_id) VALUES($1) RETURNING id",
+        [clientId],
+        (err, res) => {
+            if (err) {
+                console.log("ERROR: " + err);
+            } else {
+                console.log("START OK");
+                lastTrackId = res.rows[0].id;
+                console.log(lastTrackId);
+            }
+        }
+    );
+};
+
+const updateTrackStopTime = () => {
+    db.query(
+        "UPDATE tracks SET stop_record = CURRENT_TIMESTAMP WHERE id = $1",
+        [lastTrackId],
+        (err, res) => {
+            if (err) {
+                console.log("ERROR: " + err);
+            } else {
+                console.log("STOP OK");
+            }
+        }
+    );
+};
+
 io.on("connection", (socket) => {
     console.log("A new client connected with id: " + socket.id);
 
@@ -81,32 +111,10 @@ io.on("connection", (socket) => {
         if (saving) {
             console.log("START SAVING COORDINATES");
             geoJSONtemplate.features[0].geometry.coordinates = [];
-            db.query(
-                "INSERT INTO tracks(client_id) VALUES($1) RETURNING id",
-                [socket.id],
-                (err, res) => {
-                    if (err) {
-                        console.log("ERROR: " + err);
-                    } else {
-                        console.log("START OK");
-                        lastTrackId = res.rows[0].id;
-                        console.log(lastTrackId);
-                    }
-                }
-            );
+            saveTrack(socket.id);
         } else {
             console.log(lastTrackId);
-            db.query(
-                "UPDATE tracks SET stop_record = CURRENT_TIMESTAMP WHERE id = $1",
-                [lastTrackId],
-                (err, res) => {
-                    if (err) {
-                        console.log("ERROR: " + err);
-                    } else {
-                        console.log("STOP OK");
-                    }
-                }
-            );
+            updateTrackStopTime();
         }
     });
 });
