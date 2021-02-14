@@ -4,7 +4,7 @@ const server = require("http").createServer(app);
 const io = require("socket.io")(server, {
     cors: { origin: "*" },
 });
-const db = require("./db.js");
+const sp = require("./save_procedures.js");
 
 let saving = false;
 
@@ -26,52 +26,6 @@ let geoJSONtemplate = {
     ],
 };
 
-let lastTrackId;
-
-const saveCoordinate = (lat, lon, head) => {
-    db.query(
-        "INSERT INTO coordinates(track_id, latitude, longitude, heading) VALUES($1, $2, $3, $4)",
-        [lastTrackId, lat, lon, head],
-        (err, res) => {
-            if (err) {
-                console.log("ERROR: " + err);
-            } else {
-                console.log("SAVED COORDINATE!");
-            }
-        }
-    );
-};
-
-const saveTrack = (clientId) => {
-    db.query(
-        "INSERT INTO tracks(client_id) VALUES($1) RETURNING id",
-        [clientId],
-        (err, res) => {
-            if (err) {
-                console.log("ERROR: " + err);
-            } else {
-                console.log("START OK");
-                lastTrackId = res.rows[0].id;
-                console.log(lastTrackId);
-            }
-        }
-    );
-};
-
-const updateTrackStopTime = () => {
-    db.query(
-        "UPDATE tracks SET stop_record = CURRENT_TIMESTAMP WHERE id = $1",
-        [lastTrackId],
-        (err, res) => {
-            if (err) {
-                console.log("ERROR: " + err);
-            } else {
-                console.log("STOP OK");
-            }
-        }
-    );
-};
-
 io.on("connection", (socket) => {
     console.log("A new client connected with id: " + socket.id);
 
@@ -89,7 +43,7 @@ io.on("connection", (socket) => {
                 data.lat,
                 data.heading,
             ]);
-            saveCoordinate(data.lat, data.lon, data.heading);
+            sp.saveCoordinate(data.lat, data.lon, data.heading);
         } else {
             geoJSONtemplate.features[0].properties.shape = "Marker";
             geoJSONtemplate.features[0].geometry.type = "Point";
@@ -111,10 +65,9 @@ io.on("connection", (socket) => {
         if (saving) {
             console.log("START SAVING COORDINATES");
             geoJSONtemplate.features[0].geometry.coordinates = [];
-            saveTrack(socket.id);
+            sp.saveTrack(socket.id);
         } else {
-            console.log(lastTrackId);
-            updateTrackStopTime();
+            sp.updateTrackStopTime();
         }
     });
 });
