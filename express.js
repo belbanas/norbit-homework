@@ -5,26 +5,18 @@ const io = require("socket.io")(server, {
     cors: { origin: "*" },
 });
 const sp = require("./save_procedures.js");
+const fs = require("fs");
 
 let saving = false;
 
-let geoJSONtemplate = {
-    type: "FeatureCollection",
-    features: [
-        {
-            type: "Feature",
-            properties: {
-                shape: "",
-                name: "Unnamed Layer",
-                category: "default",
-            },
-            geometry: {
-                type: "",
-                coordinates: [],
-            },
-        },
-    ],
-};
+let geoJSONtemplate;
+let filename = "./geoJSONtemplate.json";
+try {
+    const data = fs.readFileSync(filename, "utf8");
+    geoJSONtemplate = JSON.parse(data);
+} catch (e) {
+    console.log(e);
+}
 
 io.on("connection", (socket) => {
     console.log("A new client connected with id: " + socket.id);

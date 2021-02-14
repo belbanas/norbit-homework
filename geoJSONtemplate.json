@@ -1,0 +1,17 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "shape": "",
+                "name": "Unnamed Layer",
+                "category": "default"
+            },
+            "geometry": {
+                "type": "",
+                "coordinates": []
+            }
+        }
+    ]
+}
