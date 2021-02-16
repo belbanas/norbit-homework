@@ -9,6 +9,7 @@ const views = require("./views.js");
 const fs = require("fs");
 
 let saving = false;
+let streaming = true;
 
 let geoJSONtemplate;
 let filename = "./geoJSONtemplate.json";
@@ -26,13 +27,14 @@ async function getTrackList() {
 
 async function getPointsForTrack(socket, id) {
     let res = await views.getPointsForTrack(id);
+    geoJSONtemplate.features[0].geometry.coordinates = [];
     geoJSONtemplate.features[0].properties.shape = "Line";
     geoJSONtemplate.features[0].geometry.type = "LineString";
     for (let coord of res) {
         geoJSONtemplate.features[0].geometry.coordinates.push([
             coord.longitude,
             coord.latitude,
-            coord.heading
+            coord.heading,
         ]);
     }
     io.sockets.emit("broadcast", geoJSONtemplate);
@@ -49,23 +51,25 @@ io.on("connection", (socket) => {
     });
 
     socket.on("coordinates", (data) => {
-        if (saving) {
-            geoJSONtemplate.features[0].properties.shape = "Line";
-            geoJSONtemplate.features[0].geometry.type = "LineString";
-            geoJSONtemplate.features[0].geometry.coordinates.push([
-                data.lon,
-                data.lat,
-                data.heading,
-            ]);
-            sp.saveCoordinate(data.lat, data.lon, data.heading);
-        } else {
-            geoJSONtemplate.features[0].properties.shape = "Marker";
-            geoJSONtemplate.features[0].geometry.type = "Point";
-            geoJSONtemplate.features[0].geometry.coordinates = [
-                data.lon,
-                data.lat,
-                data.heading,
-            ];
+        if (streaming) {
+            if (saving) {
+                geoJSONtemplate.features[0].properties.shape = "Line";
+                geoJSONtemplate.features[0].geometry.type = "LineString";
+                geoJSONtemplate.features[0].geometry.coordinates.push([
+                    data.lon,
+                    data.lat,
+                    data.heading,
+                ]);
+                sp.saveCoordinate(data.lat, data.lon, data.heading);
+            } else {
+                geoJSONtemplate.features[0].properties.shape = "Marker";
+                geoJSONtemplate.features[0].geometry.type = "Point";
+                geoJSONtemplate.features[0].geometry.coordinates = [
+                    data.lon,
+                    data.lat,
+                    data.heading,
+                ];
+            }
         }
         socket.broadcast.emit("broadcast", geoJSONtemplate);
     });
@@ -88,6 +92,10 @@ io.on("connection", (socket) => {
 
     socket.on("pointsForTrack", (id) => {
         getPointsForTrack(socket, id);
+    });
+
+    socket.on("streaming", () => {
+        streaming = streaming === true ? false : true;
     });
 });
 

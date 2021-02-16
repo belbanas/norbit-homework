@@ -50,7 +50,11 @@ function App() {
 
     const getPointsForTrack = (id) => {
         socket.emit("pointsForTrack", id);
-    }
+    };
+
+    const streamBtnHandler = () => {
+        socket.emit("streaming");
+    };
 
     return (
         <div className="App">
@@ -62,9 +66,13 @@ function App() {
             <div className="record-coord-label">
                 <button onClick={startBtnHandler}>Start recording</button>
                 <button onClick={stopBtnHandler}>Stop recording</button>
+                <button onClick={streamBtnHandler}>Stream ON/OFF</button>
             </div>
             <div className="tracks-label">
-                <TracksComponent tracks={tracks} getPointsForTrack={getPointsForTrack}/>
+                <TracksComponent
+                    tracks={tracks}
+                    getPointsForTrack={getPointsForTrack}
+                />
             </div>
         </div>
     );
