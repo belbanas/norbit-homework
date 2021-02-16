@@ -16,7 +16,7 @@ function App() {
 
     useEffect(() => {
         socket = socketIOClient(ENDPOINT);
-        socket.on("broadcast", (data) => {
+        socket.on("broadcast", (data, data2) => {
             const wktOptions = {
                 dataProjection: "EPSG:4326",
                 featureProjection: "EPSG:3857",
@@ -32,6 +32,7 @@ function App() {
                 setResponse(data.features[0].geometry.coordinates);
             }
             setFeatures(parsedFeatures);
+            setSaving(data2);
         });
         socket.on("tracks", (data) => {
             setTracks(data);
@@ -42,13 +43,11 @@ function App() {
     const startBtnHandler = () => {
         socket.emit("save", true);
         console.log("START RECORDING");
-        setSaving(true);
     };
 
     const stopBtnHandler = () => {
         socket.emit("save", false);
         console.log("STOP RECORDING");
-        setSaving(false);
     };
 
     const getPointsForTrack = (id) => {
@@ -65,7 +64,11 @@ function App() {
                 Current coordinates: Latitude: {response[0]}, Longitude:{" "}
                 {response[1]}, Heading: {response[2]}
             </div>
-            <MapComponent features={features} heading={response[2]} saving={saving}/>
+            <MapComponent
+                features={features}
+                heading={response[2]}
+                saving={saving}
+            />
             <div className="record-coord-label">
                 <button onClick={startBtnHandler}>Start recording</button>
                 <button onClick={stopBtnHandler}>Stop recording</button>

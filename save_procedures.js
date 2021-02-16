@@ -25,7 +25,6 @@ const saveTrack = (clientId) => {
             } else {
                 console.log("START OK");
                 lastTrackId = res.rows[0].id;
-                console.log(lastTrackId);
             }
         }
     );

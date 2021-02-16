@@ -78,7 +78,7 @@ function MapComponent(props) {
                 { padding: [100, 100, 100, 100], minResolution: 0.2 }
             );
         }
-    }, [props.features, featuresLayer, map]);
+    }, [props.features, featuresLayer, map, props]);
 
     return (
         <React.Fragment>

@@ -37,7 +37,7 @@ async function getPointsForTrack(socket, id) {
             coord.heading,
         ]);
     }
-    io.sockets.emit("broadcast", geoJSONtemplate);
+    io.sockets.emit("broadcast", geoJSONtemplate, saving);
 }
 
 io.on("connection", (socket) => {
@@ -71,7 +71,7 @@ io.on("connection", (socket) => {
                 ];
             }
         }
-        socket.broadcast.emit("broadcast", geoJSONtemplate);
+        socket.broadcast.emit("broadcast", geoJSONtemplate, saving);
     });
 
     socket.on("disconnect", () => {
