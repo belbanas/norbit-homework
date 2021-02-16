@@ -5,6 +5,7 @@ const io = require("socket.io")(server, {
     cors: { origin: "*" },
 });
 const sp = require("./save_procedures.js");
+const views = require("./views.js");
 const fs = require("fs");
 
 let saving = false;
@@ -18,8 +19,15 @@ try {
     console.log(e);
 }
 
+async function getTrackList() {
+    let res = await views.viewTracks();
+    io.sockets.emit("tracks", JSON.stringify(res));
+}
+
 io.on("connection", (socket) => {
     console.log("A new client connected with id: " + socket.id);
+
+    getTrackList();
 
     socket.on("message", (message) => {
         io.sockets.emit("broadcast", message);
