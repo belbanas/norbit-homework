@@ -24,6 +24,20 @@ async function getTrackList() {
     io.sockets.emit("tracks", res);
 }
 
+async function getPointsForTrack(socket, id) {
+    let res = await views.getPointsForTrack(id);
+    geoJSONtemplate.features[0].properties.shape = "Line";
+    geoJSONtemplate.features[0].geometry.type = "LineString";
+    for (let coord of res) {
+        geoJSONtemplate.features[0].geometry.coordinates.push([
+            coord.longitude,
+            coord.latitude,
+            coord.heading
+        ]);
+    }
+    io.sockets.emit("broadcast", geoJSONtemplate);
+}
+
 io.on("connection", (socket) => {
     console.log("A new client connected with id: " + socket.id);
 
@@ -73,8 +87,8 @@ io.on("connection", (socket) => {
     });
 
     socket.on("pointsForTrack", (id) => {
-        console.log(id);
-    })
+        getPointsForTrack(socket, id);
+    });
 });
 
 app.get("/", (req, res) => {
