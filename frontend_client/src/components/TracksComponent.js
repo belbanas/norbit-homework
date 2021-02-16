@@ -1,6 +1,10 @@
 import React from "react";
 
 function TracksComponent(props) {
+    function logId(id) {
+        console.log("kaka: " + id)
+    }
+
     return <React.Fragment>
         <h3>Recorded Tracks</h3>
         <table>
@@ -11,7 +15,10 @@ function TracksComponent(props) {
             </tr>
             {props.tracks.map(track => (
                 <tr>
-                    <td>{track.id}</td>
+                    <td onClick={function valami() {
+                        console.log(track.id)
+                        props.getPointsForTrack(track.id);
+                    }}>{track.id}</td>
                     <td>{track.start_record}</td>
                     <td>{track.stop_record}</td>
                 </tr>

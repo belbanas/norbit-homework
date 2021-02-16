@@ -49,6 +49,10 @@ function App() {
         console.log("STOP RECORDING");
     };
 
+    const getPointsForTrack = (id) => {
+        socket.emit("pointsForTrack", id);
+    }
+
     return (
         <div className="App">
             <div className="coordinates-label">
@@ -61,7 +65,7 @@ function App() {
                 <button onClick={stopBtnHandler}>Stop recording</button>
             </div>
             <div className="tracks-label">
-                <TracksComponent tracks={tracks}/>
+                <TracksComponent tracks={tracks} getPointsForTrack={getPointsForTrack}/>
             </div>
         </div>
     );

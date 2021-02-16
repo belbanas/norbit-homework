@@ -71,6 +71,10 @@ io.on("connection", (socket) => {
             getTrackList();
         }
     });
+
+    socket.on("pointsForTrack", (id) => {
+        console.log(id);
+    })
 });
 
 app.get("/", (req, res) => {
