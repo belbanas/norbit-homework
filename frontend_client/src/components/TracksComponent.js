@@ -10,7 +10,7 @@ function TracksComponent(props) {
                 <th>Record stop</th>
             </tr>
             {props.tracks.map(track => (
-                <tr>
+                <tr key={track.id}>
                     <td onClick={function getTrackId() {
                         console.log(track.id)
                         props.getPointsForTrack(track.id)
