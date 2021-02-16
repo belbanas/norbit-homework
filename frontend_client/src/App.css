@@ -16,3 +16,10 @@
   background: white;
   border-radius: 5px;
 }
+
+.tracks-label {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  background: white;
+}

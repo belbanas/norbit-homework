@@ -21,7 +21,7 @@ try {
 
 async function getTrackList() {
     let res = await views.viewTracks();
-    io.sockets.emit("tracks", JSON.stringify(res));
+    io.sockets.emit("tracks", res);
 }
 
 io.on("connection", (socket) => {

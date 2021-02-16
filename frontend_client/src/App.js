@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import GeoJSON from "ol/format/GeoJSON";
 import MapComponent from "./components/MapComponent";
+import TracksComponent from "./components/TracksComponent";
 
 const ENDPOINT = "ws://localhost:3000";
 let socket;
@@ -10,6 +11,7 @@ let socket;
 function App() {
     const [response, setResponse] = useState([]);
     const [features, setFeatures] = useState({});
+    const [tracks, setTracks] = useState([]);
 
     useEffect(() => {
         socket = socketIOClient(ENDPOINT);
@@ -29,6 +31,10 @@ function App() {
                 setResponse(data.features[0].geometry.coordinates);
             }
             setFeatures(parsedFeatures);
+        });
+        socket.on("tracks", (data) => {
+            console.log(data);
+            setTracks(data);
         });
         return () => socket.disconnect();
     }, []);
@@ -53,6 +59,9 @@ function App() {
             <div className="record-coord-label">
                 <button onClick={startBtnHandler}>Start recording</button>
                 <button onClick={stopBtnHandler}>Stop recording</button>
+            </div>
+            <div className="tracks-label">
+                <TracksComponent tracks={tracks}/>
             </div>
         </div>
     );
