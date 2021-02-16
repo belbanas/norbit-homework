@@ -12,6 +12,7 @@ function App() {
     const [response, setResponse] = useState([]);
     const [features, setFeatures] = useState({});
     const [tracks, setTracks] = useState([]);
+    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         socket = socketIOClient(ENDPOINT);
@@ -41,11 +42,13 @@ function App() {
     const startBtnHandler = () => {
         socket.emit("save", true);
         console.log("START RECORDING");
+        setSaving(true);
     };
 
     const stopBtnHandler = () => {
         socket.emit("save", false);
         console.log("STOP RECORDING");
+        setSaving(false);
     };
 
     const getPointsForTrack = (id) => {
@@ -62,7 +65,7 @@ function App() {
                 Current coordinates: Latitude: {response[0]}, Longitude:{" "}
                 {response[1]}, Heading: {response[2]}
             </div>
-            <MapComponent features={features} heading={response[2]} />
+            <MapComponent features={features} heading={response[2]} saving={saving}/>
             <div className="record-coord-label">
                 <button onClick={startBtnHandler}>Start recording</button>
                 <button onClick={stopBtnHandler}>Stop recording</button>

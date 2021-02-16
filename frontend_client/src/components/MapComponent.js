@@ -6,6 +6,14 @@ import VectorSource from "ol/source/Vector";
 import OSM from "ol/source/OSM";
 import { Style, Stroke, RegularShape, Fill } from "ol/style";
 
+const getLineColor = (props) => {
+    if (props.saving) {
+        return "red";
+    } else {
+        return "black";
+    }
+}
+
 function MapComponent(props) {
     const [map, setMap] = useState();
     const [featuresLayer, setFeaturesLayer] = useState();
@@ -47,7 +55,7 @@ function MapComponent(props) {
             featuresLayer.setStyle(
                 new Style({
                     stroke: new Stroke({
-                        color: "red",
+                        color: getLineColor(props),
                         width: 2,
                     }),
                     image: new RegularShape({
@@ -60,6 +68,7 @@ function MapComponent(props) {
                         }),
                         points: 3,
                         radius: 10,
+                        scale: [1, 1.5],
                         rotation: (props.heading * Math.PI) / 180,
                     }),
                 })
