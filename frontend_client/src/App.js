@@ -33,7 +33,6 @@ function App() {
             setFeatures(parsedFeatures);
         });
         socket.on("tracks", (data) => {
-            console.log(data);
             setTracks(data);
         });
         return () => socket.disconnect();
