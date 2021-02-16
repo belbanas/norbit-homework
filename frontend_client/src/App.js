@@ -62,7 +62,7 @@ function App() {
                 Current coordinates: Latitude: {response[0]}, Longitude:{" "}
                 {response[1]}, Heading: {response[2]}
             </div>
-            <MapComponent features={features} />
+            <MapComponent features={features} heading={response[2]} />
             <div className="record-coord-label">
                 <button onClick={startBtnHandler}>Start recording</button>
                 <button onClick={stopBtnHandler}>Stop recording</button>
