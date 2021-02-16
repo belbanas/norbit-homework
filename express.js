@@ -68,6 +68,7 @@ io.on("connection", (socket) => {
             sp.saveTrack(socket.id);
         } else {
             sp.updateTrackStopTime();
+            getTrackList();
         }
     });
 });
