@@ -14,15 +14,15 @@ function TracksComponent(props) {
                 </thead>
                 <tbody>
                     {props.tracks.map((track) => (
-                        <tr key={track.id}>
-                            <td
-                                onClick={function getTrackId() {
-                                    console.log(track.id);
-                                    props.getPointsForTrack(track.id);
-                                }}
-                            >
-                                {track.id}
-                            </td>
+                        <tr
+                            key={track.id}
+                            className="track-row"
+                            onClick={function getTrackId() {
+                                console.log(track.id);
+                                props.getPointsForTrack(track.id);
+                            }}
+                        >
+                            <td>{track.id}</td>
                             <td>{track.start_record}</td>
                             <td>{track.stop_record}</td>
                         </tr>

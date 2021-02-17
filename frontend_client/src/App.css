@@ -23,3 +23,8 @@
   bottom: 0;
   background: white;
 }
+
+.track-row:hover {
+  cursor: pointer;
+  color: red;
+}
