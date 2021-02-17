@@ -13,3 +13,14 @@ Frontend: react, socket.io, openLayers
 - run "node express"  for the server
 - run "node mock_app" for the mock application which streams boat position data
 - run "npm start" inside the frontend_client folder for running the frontend
+
+### Known bugs / future tasks:
+
+- No multiple recording sessions simultaneously
+- Newly connected clients can stop the recording in progress
+- Newly connected clients can stop the stream for all clients
+
+- Add the ability to zoom when streaming data
+- User registration for managing saved sessions
+- Possibility to delete unwanted tracks
+- User friendly design for track list and for the buttons
